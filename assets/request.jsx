@@ -50,15 +50,25 @@ function RequestPage({ navigate, store }) {
 
   const handleSubmit = () => {
     if (!selected) return;
-    const req = {
-      title: selected.title,
-      artist: selected.artist,
-      album: selected.album,
-      color: selected.color,
-      requester: name.trim() || "Anon",
-    };
-    store.add(req);
-    setSubmitted({ ...req });
+    const todayStr = new Date().toDateString();
+    const existing = store.requests.find(r =>
+      r.title.toLowerCase() === selected.title.toLowerCase() &&
+      r.artist.toLowerCase() === selected.artist.toLowerCase() &&
+      new Date(r.ts).toDateString() === todayStr &&
+      r.status !== "played"
+    );
+    if (existing) {
+      store.update(existing.id, { votes: existing.votes + 1 });
+    } else {
+      store.add({
+        title: selected.title,
+        artist: selected.artist,
+        album: selected.album,
+        color: selected.color,
+        requester: name.trim() || "Anon",
+      });
+    }
+    setSubmitted({ title: selected.title, artist: selected.artist, requester: name.trim() || "Anon" });
     setSelected(null);
     setQuery("");
     setName("");
