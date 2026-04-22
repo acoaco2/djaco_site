@@ -224,25 +224,25 @@ function MonitorPage({ store }) {
           <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.2em", color: "var(--orange)", marginBottom: 6 }}>
             ● CLASSIFICA DEL GIORNO
           </div>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 16 }}>
-            <div style={{ fontFamily: "var(--font-display)", fontSize: 52, lineHeight: 0.9 }}>
-              Top 5<span style={{ color: "var(--orange)" }}>.</span>
-            </div>
-            <button
-              onClick={() => store.removeMany(top.map(r => r.id))}
-              style={{
-                background: "transparent", border: "1px solid rgba(255,255,255,0.15)",
-                color: "rgba(255,255,255,0.3)", borderRadius: 6, padding: "3px 8px",
-                fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.1em", cursor: "pointer",
-              }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--orange)"; e.currentTarget.style.color = "var(--orange)"; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)"; e.currentTarget.style.color = "rgba(255,255,255,0.3)"; }}
-            >RESET</button>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: 52, lineHeight: 0.9 }}>
+            Top 5<span style={{ color: "var(--orange)" }}>.</span>
           </div>
         </div>
-        <div style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--cream-2)", lineHeight: 1.8 }}>
-          <div>{new Date(now).toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}</div>
-          <div style={{ opacity: 0.4, fontSize: 10 }}>refresh in {countdown}s</div>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 10 }}>
+          <div style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--cream-2)", lineHeight: 1.8 }}>
+            <div>{new Date(now).toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}</div>
+            <div style={{ opacity: 0.4, fontSize: 10 }}>refresh in {countdown}s</div>
+          </div>
+          <button
+            onClick={() => store.removeMany(top.map(r => r.id))}
+            style={{
+              background: "transparent", border: "1px solid rgba(255,255,255,0.15)",
+              color: "rgba(255,255,255,0.3)", borderRadius: 6, padding: "3px 8px",
+              fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.1em", cursor: "pointer",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--orange)"; e.currentTarget.style.color = "var(--orange)"; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)"; e.currentTarget.style.color = "rgba(255,255,255,0.3)"; }}
+          >RESET</button>
         </div>
       </div>
 
