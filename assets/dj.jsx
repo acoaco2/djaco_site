@@ -213,6 +213,27 @@ function MonitorPage({ store, navigate }) {
 
   const medals = ["var(--orange)", "#aaaaaa", "#cd7f32"];
 
+  const exportTxt = () => {
+    const dateStr = new Date().toLocaleDateString("it-IT");
+    const allToday = [...top, ...played].sort((a, b) => b.votes - a.votes);
+    const lines = [`CLASSIFICA DEL GIORNO — ${dateStr}`, ""];
+    allToday.forEach((r, i) => {
+      lines.push(`${i + 1}. ${r.title} — ${r.artist} (${r.votes} ${r.votes === 1 ? "voto" : "voti"})`);
+    });
+    lines.push("", "─".repeat(40), "", "LOG VOTAZIONI", "ORARIO  |  NOME  |  ARTISTA  |  TITOLO", "");
+    allToday
+      .flatMap(r => (r.voteLog || [{ ts: r.ts, requester: r.requester }]).map(v => ({ ...v, title: r.title, artist: r.artist })))
+      .sort((a, b) => a.ts - b.ts)
+      .forEach(v => {
+        const t = new Date(v.ts).toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+        lines.push(`${t}  |  ${v.requester}  |  ${v.artist}  |  ${v.title}`);
+      });
+    const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
+    const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: `classifica-${dateStr.replace(/\//g, "-")}.txt` });
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
   return (
     <div style={{
       background: "var(--ink)", color: "var(--cream)",
@@ -243,16 +264,28 @@ function MonitorPage({ store, navigate }) {
             <div>{new Date(now).toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}</div>
             <div style={{ opacity: 0.4, fontSize: 10 }}>refresh in {countdown}s</div>
           </div>
-          <button
-            onClick={() => store.removeMany(top.map(r => r.id))}
-            style={{
-              background: "transparent", border: "1px solid rgba(255,255,255,0.15)",
-              color: "rgba(255,255,255,0.3)", borderRadius: 6, padding: "3px 8px",
-              fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.1em", cursor: "pointer",
-            }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--orange)"; e.currentTarget.style.color = "var(--orange)"; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)"; e.currentTarget.style.color = "rgba(255,255,255,0.3)"; }}
-          >RESET</button>
+          <div style={{ display: "flex", gap: 6 }}>
+            <button
+              onClick={exportTxt}
+              style={{
+                background: "transparent", border: "1px solid rgba(255,255,255,0.15)",
+                color: "rgba(255,255,255,0.3)", borderRadius: 6, padding: "3px 8px",
+                fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.1em", cursor: "pointer",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--orange)"; e.currentTarget.style.color = "var(--orange)"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)"; e.currentTarget.style.color = "rgba(255,255,255,0.3)"; }}
+            >ESPORTA</button>
+            <button
+              onClick={() => store.removeMany(top.map(r => r.id))}
+              style={{
+                background: "transparent", border: "1px solid rgba(255,255,255,0.15)",
+                color: "rgba(255,255,255,0.3)", borderRadius: 6, padding: "3px 8px",
+                fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.1em", cursor: "pointer",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--orange)"; e.currentTarget.style.color = "var(--orange)"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)"; e.currentTarget.style.color = "rgba(255,255,255,0.3)"; }}
+            >RESET</button>
+          </div>
         </div>
       </div>
 

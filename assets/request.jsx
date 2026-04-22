@@ -58,7 +58,10 @@ function RequestPage({ navigate, store }) {
       r.status !== "played"
     );
     if (existing) {
-      store.update(existing.id, { votes: existing.votes + 1 });
+      store.update(existing.id, {
+        votes: existing.votes + 1,
+        voteLog: [...(existing.voteLog || []), { ts: Date.now(), requester: name.trim() || "Anon" }],
+      });
     } else {
       store.add({
         title: selected.title,

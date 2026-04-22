@@ -41,8 +41,10 @@ function useRequestStore() {
   };
 
   const add = (req) => {
+    const now = Date.now();
     const next = [
-      { ...req, id: Date.now() + "-" + Math.random().toString(36).slice(2, 6), votes: 1, status: "queued", ts: Date.now() },
+      { ...req, id: now + "-" + Math.random().toString(36).slice(2, 6), votes: 1, status: "queued", ts: now,
+        voteLog: [{ ts: now, requester: req.requester }] },
       ...requests
     ];
     save(next);
