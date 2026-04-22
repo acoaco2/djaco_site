@@ -8,18 +8,28 @@ function RequestPage({ navigate, store }) {
   const [submitted, setSubmitted] = React.useState(null);
   const inputRef = React.useRef(null);
 
+  const playedKeys = React.useMemo(() => {
+    const todayStr = new Date().toDateString();
+    return new Set(
+      store.requests
+        .filter(r => r.status === "played" && new Date(r.ts).toDateString() === todayStr)
+        .map(r => r.title.toLowerCase() + "§" + r.artist.toLowerCase())
+    );
+  }, [store.requests]);
+
   const results = React.useMemo(() => {
     if (!catalog) return [];
     const q = query.trim().toLowerCase();
     if (!q) return [];
     return catalog
+      .filter(t => !playedKeys.has(t.title.toLowerCase() + "§" + t.artist.toLowerCase()))
       .filter(t =>
         t.title.toLowerCase().includes(q) ||
         t.artist.toLowerCase().includes(q) ||
         (t.album && t.album.toLowerCase().includes(q))
       )
       .slice(0, 8);
-  }, [query, catalog]);
+  }, [query, catalog, playedKeys]);
 
   const todayTop = React.useMemo(() => {
     const todayStr = new Date().toDateString();

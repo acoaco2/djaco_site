@@ -231,6 +231,17 @@ function MonitorPage({ store }) {
         <div style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--cream-2)", lineHeight: 1.8 }}>
           <div>{new Date(now).toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}</div>
           <div style={{ opacity: 0.4, fontSize: 10 }}>refresh in {countdown}s</div>
+          <button
+            onClick={() => { if (window.confirm("Resettare tutta la classifica?")) todayAll.forEach(r => store.remove(r.id)); }}
+            style={{
+              marginTop: 10, background: "transparent", border: "1px solid rgba(255,255,255,0.2)",
+              color: "rgba(255,255,255,0.35)", borderRadius: 6, padding: "4px 10px",
+              fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.1em",
+              cursor: "pointer", display: "block", width: "100%",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--orange)"; e.currentTarget.style.color = "var(--orange)"; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)"; e.currentTarget.style.color = "rgba(255,255,255,0.35)"; }}
+          >RESET</button>
         </div>
       </div>
 
