@@ -213,23 +213,19 @@ function MonitorPage({ store, navigate }) {
 
   const medals = ["var(--orange)", "#aaaaaa", "#cd7f32"];
 
-  const exportTxt = () => {
+  const exportCsv = () => {
     const dateStr = new Date().toLocaleDateString("it-IT");
-    const allToday = [...top, ...played].sort((a, b) => b.votes - a.votes);
-    const lines = [`CLASSIFICA DEL GIORNO — ${dateStr}`, ""];
-    allToday.forEach((r, i) => {
-      lines.push(`${i + 1}. ${r.title} — ${r.artist} (${r.votes} ${r.votes === 1 ? "voto" : "voti"})`);
-    });
-    lines.push("", "─".repeat(40), "", "LOG VOTAZIONI", "ORARIO  |  NOME  |  ARTISTA  |  TITOLO", "");
-    allToday
+    const q = (s) => `"${String(s).replace(/"/g, '""')}"`;
+    const rows = [["orario", "nome", "artista", "titolo"].map(q).join(",")];
+    [...top, ...played]
       .flatMap(r => (r.voteLog || [{ ts: r.ts, requester: r.requester }]).map(v => ({ ...v, title: r.title, artist: r.artist })))
       .sort((a, b) => a.ts - b.ts)
       .forEach(v => {
         const t = new Date(v.ts).toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-        lines.push(`${t}  |  ${v.requester}  |  ${v.artist}  |  ${v.title}`);
+        rows.push([t, v.requester, v.artist, v.title].map(q).join(","));
       });
-    const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
-    const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: `classifica-${dateStr.replace(/\//g, "-")}.txt` });
+    const blob = new Blob([rows.join("\n")], { type: "text/csv;charset=utf-8" });
+    const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: `classifica-${dateStr.replace(/\//g, "-")}.csv` });
     a.click();
     URL.revokeObjectURL(a.href);
   };
@@ -266,7 +262,7 @@ function MonitorPage({ store, navigate }) {
           </div>
           <div style={{ display: "flex", gap: 6 }}>
             <button
-              onClick={exportTxt}
+              onClick={exportCsv}
               style={{
                 background: "transparent", border: "1px solid rgba(255,255,255,0.15)",
                 color: "rgba(255,255,255,0.3)", borderRadius: 6, padding: "3px 8px",
