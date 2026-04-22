@@ -196,6 +196,81 @@ function DJPage({ navigate, store }) {
   );
 }
 
+function MonitorPage({ store }) {
+  const [now, setNow] = React.useState(Date.now());
+  const [countdown, setCountdown] = React.useState(10);
+
+  React.useEffect(() => {
+    const refresh = setInterval(() => { setNow(Date.now()); setCountdown(10); }, 10000);
+    const tick   = setInterval(() => setCountdown(c => Math.max(0, c - 1)), 1000);
+    return () => { clearInterval(refresh); clearInterval(tick); };
+  }, []);
+
+  const todayStr = new Date(now).toDateString();
+  const top = store.requests
+    .filter(r => new Date(r.ts).toDateString() === todayStr)
+    .sort((a, b) => b.votes - a.votes)
+    .slice(0, 5);
+
+  const medals = ["var(--orange)", "#aaaaaa", "#cd7f32"];
+
+  return (
+    <div style={{
+      background: "var(--ink)", color: "var(--cream)",
+      minHeight: "100vh", padding: "40px 32px", boxSizing: "border-box",
+    }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 40 }}>
+        <div>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.2em", color: "var(--orange)", marginBottom: 6 }}>
+            ● CLASSIFICA DEL GIORNO
+          </div>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: 52, lineHeight: 0.9 }}>
+            Top 5<span style={{ color: "var(--orange)" }}>.</span>
+          </div>
+        </div>
+        <div style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--cream-2)", lineHeight: 1.8 }}>
+          <div>{new Date(now).toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}</div>
+          <div style={{ opacity: 0.4, fontSize: 10 }}>refresh in {countdown}s</div>
+        </div>
+      </div>
+
+      {top.length === 0 ? (
+        <div style={{ marginTop: 80, textAlign: "center", fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--cream-2)", letterSpacing: "0.1em" }}>
+          Nessuna richiesta ancora oggi.
+        </div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+          {top.map((r, i) => (
+            <div key={r.id} style={{ display: "flex", alignItems: "center", gap: 24 }}>
+              <div style={{
+                width: 72, flexShrink: 0, textAlign: "right",
+                fontFamily: "var(--font-display)", fontSize: 60, lineHeight: 1,
+                color: i < 3 ? medals[i] : "rgba(255,255,255,0.25)",
+              }}>
+                {i + 1}
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{
+                  fontFamily: "var(--font-display)", fontSize: 34, lineHeight: 1.1,
+                  overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                }}>
+                  {r.title}
+                </div>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 15, color: "var(--cream-2)", marginTop: 4, letterSpacing: "0.05em" }}>
+                  {r.artist}
+                </div>
+              </div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 40, color: "var(--orange)", flexShrink: 0 }}>
+                {r.votes}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function iconBtn(bg, color, border = "none") {
   return {
     width: 32, height: 32, borderRadius: "50%",
@@ -208,3 +283,4 @@ function iconBtn(bg, color, border = "none") {
 }
 
 window.DJPage = DJPage;
+window.MonitorPage = MonitorPage;
