@@ -53,8 +53,9 @@ function useRequestStore() {
   };
 
   const remove = (id) => save(requests.filter(r => r.id !== id));
+  const removeMany = (ids) => save(requests.filter(r => !ids.includes(r.id)));
 
-  return { requests, add, update, remove };
+  return { requests, add, update, remove, removeMany };
 }
 
 
