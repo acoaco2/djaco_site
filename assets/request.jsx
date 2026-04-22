@@ -21,9 +21,13 @@ function RequestPage({ navigate, store }) {
       .slice(0, 8);
   }, [query, catalog]);
 
-  const suggestions = React.useMemo(() => {
-    return catalog ? catalog.slice(0, 6) : [];
-  }, [catalog]);
+  const todayTop = React.useMemo(() => {
+    const todayStr = new Date().toDateString();
+    return store.requests
+      .filter(r => new Date(r.ts).toDateString() === todayStr)
+      .sort((a, b) => b.votes - a.votes)
+      .slice(0, 5);
+  }, [store.requests]);
 
   if (catalog === undefined) return null;
   if (catalog === null) return (
@@ -155,7 +159,7 @@ function RequestPage({ navigate, store }) {
         )}
       </section>
 
-      {/* Results or suggestions */}
+      {/* Results or chart */}
       {!selected && (
         <section style={{ padding: "0 20px 16px" }}>
           {query ? (
@@ -174,9 +178,15 @@ function RequestPage({ navigate, store }) {
           ) : (
             <>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.15em", color: "var(--mute)", margin: "14px 0 8px" }}>
-                ACO'S CRATE · POPULAR
+                CLASSIFICA DEL GIORNO
               </div>
-              <TrackList tracks={suggestions} onPick={setSelected}/>
+              {todayTop.length === 0 ? (
+                <div style={{ padding: "20px 0", color: "var(--mute)", fontSize: 12, fontFamily: "var(--font-mono)", letterSpacing: "0.05em" }}>
+                  Nessuna richiesta ancora oggi.
+                </div>
+              ) : (
+                <DayChart entries={todayTop}/>
+              )}
             </>
           )}
         </section>
@@ -205,6 +215,49 @@ function RequestPage({ navigate, store }) {
           </p>
         </section>
       )}
+    </div>
+  );
+}
+
+function DayChart({ entries }) {
+  const maxVotes = entries[0]?.votes || 1;
+  const medals = ["#E8932A", "#8A8A8A", "#B87333"];
+  return (
+    <div className="stack" style={{ "--s": "2px" }}>
+      {entries.map((r, i) => (
+        <div key={r.id} style={{
+          display: "flex", alignItems: "center", gap: 12,
+          padding: "10px 8px",
+          borderBottom: "1px solid rgba(34,32,30,0.12)",
+        }}>
+          <div style={{
+            width: 24, flexShrink: 0, textAlign: "center",
+            fontFamily: "var(--font-mono)", fontSize: 13, fontWeight: 700,
+            color: i < 3 ? medals[i] : "var(--mute)",
+          }}>
+            {i + 1}
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontWeight: 600, fontSize: 14, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {r.title}
+            </div>
+            <div style={{ fontSize: 12, color: "var(--mute)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {r.artist}
+            </div>
+            <div style={{ marginTop: 5, height: 3, borderRadius: 2, background: "rgba(34,32,30,0.1)", overflow: "hidden" }}>
+              <div style={{
+                height: "100%", borderRadius: 2,
+                background: i === 0 ? "var(--orange)" : "var(--ink)",
+                width: `${Math.round((r.votes / maxVotes) * 100)}%`,
+                transition: "width 0.4s ease",
+              }}/>
+            </div>
+          </div>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--mute)", flexShrink: 0 }}>
+            {r.votes}v
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
