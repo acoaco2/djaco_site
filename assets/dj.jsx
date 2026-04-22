@@ -272,7 +272,7 @@ function MonitorPage({ store, navigate }) {
               onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)"; e.currentTarget.style.color = "rgba(255,255,255,0.3)"; }}
             >ESPORTA</button>
             <button
-              onClick={() => store.removeMany(top.map(r => r.id))}
+              onClick={() => { if (window.confirm("Hai esportato la classifica? Il reset è irreversibile.")) store.removeMany(top.map(r => r.id)); }}
               style={{
                 background: "transparent", border: "1px solid rgba(255,255,255,0.15)",
                 color: "rgba(255,255,255,0.3)", borderRadius: 6, padding: "3px 8px",
