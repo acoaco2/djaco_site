@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Dj Aco — Selector · Mixer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="assets/shared.jsx"></script>
+<script type="text/babel" src="assets/home.jsx"></script>
+<script type="text/babel" src="assets/request.jsx"></script>
+<script type="text/babel" src="assets/dj.jsx"></script>
+
+<script type="text/babel">
+const TWEAKS_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "djName": "Dj Aco",
+  "bio": "Dj Aco è un dj con uno stile personale e riconoscibile. Ogni set è un viaggio costruito sull'energia della pista, con selezioni musicali che si adattano al momento.",
+  "accent": "#E8932A",
+  "accentDeep": "#D46B1F",
+  "bg": "#F1E4CE"
+}/*EDITMODE-END*/;
+
+function App() {
+  const [route, navigate] = useHashRoute();
+  const store = useRequestStore();
+  const [tweaks, setTweaks] = React.useState(TWEAKS_DEFAULTS);
+  const [tweaksOpen, setTweaksOpen] = React.useState(false);
+  const [editMode, setEditMode] = React.useState(false);
+
+  // Apply tweaks as CSS vars
+  React.useEffect(() => {
+    document.documentElement.style.setProperty("--orange", tweaks.accent);
+    document.documentElement.style.setProperty("--orange-deep", tweaks.accentDeep);
+    document.documentElement.style.setProperty("--cream", tweaks.bg);
+  }, [tweaks]);
+
+  // Edit-mode wiring
+  React.useEffect(() => {
+    const onMsg = (e) => {
+      if (!e.data || typeof e.data !== "object") return;
+      if (e.data.type === "__activate_edit_mode") setEditMode(true);
+      if (e.data.type === "__deactivate_edit_mode") setEditMode(false);
+    };
+    window.addEventListener("message", onMsg);
+    // Defer availability ping until after listener set up
+    window.parent.postMessage({ type: "__edit_mode_available" }, "*");
+    return () => window.removeEventListener("message", onMsg);
+  }, []);
+
+  const updateTweak = (key, val) => {
+    const next = { ...tweaks, [key]: val };
+    setTweaks(next);
+    window.parent.postMessage({ type: "__edit_mode_set_keys", edits: { [key]: val } }, "*");
+  };
+
+  // Notify parent of route changes for labels
+  React.useEffect(() => {
+    const labels = { home: 1, request: 2, dj: 3 };
+    if (labels[route]) window.parent.postMessage({ slideIndexChanged: labels[route] - 1 }, "*");
+  }, [route]);
+
+  let Page;
+  if (route === "request") Page = <RequestPage navigate={navigate} store={store}/>;
+  else if (route === "dj") Page = <DJPage navigate={navigate} store={store}/>;
+  else Page = <HomePage navigate={navigate} djName={tweaks.djName} bio={tweaks.bio}/>;
+
+  return (
+    <>
+      <div className="app">
+        <TopBar route={route} navigate={navigate}/>
+        {Page}
+      </div>
+
+      {editMode && (
+        <div className="tweaks-panel">
+          <div className="between" style={{ marginBottom: 8 }}>
+            <h4>Tweaks</h4>
+            <button
+              onClick={() => setTweaksOpen(v => !v)}
+              style={{ background: "transparent", border: "none", cursor: "pointer", fontSize: 14 }}>
+              {tweaksOpen ? "−" : "+"}
+            </button>
+          </div>
+          {tweaksOpen && (
+            <>
+              <label>
+                Accent
+                <input type="color" value={tweaks.accent}
+                  onChange={(e) => updateTweak("accent", e.target.value)}/>
+              </label>
+              <label>
+                Deep
+                <input type="color" value={tweaks.accentDeep}
+                  onChange={(e) => updateTweak("accentDeep", e.target.value)}/>
+              </label>
+              <label>
+                Paper
+                <input type="color" value={tweaks.bg}
+                  onChange={(e) => updateTweak("bg", e.target.value)}/>
+              </label>
+              <label style={{ flexDirection: "column", alignItems: "stretch", gap: 4 }}>
+                <span style={{ fontSize: 11, color: "var(--mute)" }}>View</span>
+                <select
+                  value={route}
+                  onChange={(e) => navigate(e.target.value)}
+                  style={{ width: "100%" }}>
+                  <option value="home">Home</option>
+                  <option value="request">Request page</option>
+                  <option value="dj">DJ booth</option>
+                </select>
+              </label>
+              <div style={{ marginTop: 10, paddingTop: 10, borderTop: "1px dashed var(--ink)" }}>
+                <button
+                  onClick={() => { localStorage.removeItem("dj_aco_requests_v1"); window.location.reload(); }}
+                  style={{
+                    background: "transparent", border: "1px solid var(--ink)", borderRadius: 6,
+                    padding: "4px 8px", cursor: "pointer", fontFamily: "var(--font-mono)", fontSize: 10,
+                    width: "100%",
+                  }}>
+                  RESET REQUESTS
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>

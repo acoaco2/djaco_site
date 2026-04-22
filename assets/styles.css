@@ -1,0 +1,294 @@
+/* ============ DJ ACO — warm analog / vinyl-soul ============ */
+
+:root {
+  --cream: #F1E4CE;
+  --cream-2: #E8D8BC;
+  --paper: #F7ECD8;
+  --ink: #22201E;
+  --ink-soft: #3A352F;
+  --mute: #7A6F60;
+  --orange: #E8932A;
+  --orange-deep: #D46B1F;
+  --teal: #3A6B7A;
+  --teal-deep: #2A5260;
+  --red: #C1432B;
+
+  --radius: 14px;
+  --radius-sm: 8px;
+
+  --font-display: "Archivo Black", "Arial Black", sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Paper grain overlay — subtle, applied globally */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.13 0 0 0 0 0.12 0 0 0 0.12 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* Vignette — very subtle */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(34,32,30,0.18) 100%);
+}
+
+.app {
+  min-height: 100vh;
+  max-width: 460px;
+  margin: 0 auto;
+  position: relative;
+  background: var(--cream);
+  box-shadow: 0 0 0 1px rgba(34,32,30,0.06);
+}
+
+/* Typography */
+.display {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+.mono { font-family: var(--font-mono); }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 22px;
+  border-radius: 999px;
+  border: 2px solid var(--ink);
+  background: var(--ink);
+  color: var(--cream);
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 4px 4px 0 var(--ink);
+  width: 100%;
+}
+.btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.btn.accent {
+  background: var(--orange);
+  color: var(--ink);
+  border-color: var(--ink);
+}
+.btn.ghost {
+  background: transparent;
+  color: var(--ink);
+  box-shadow: none;
+}
+.btn.ghost:active { transform: none; box-shadow: none; }
+
+/* Chip / tag */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--cream);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.chip.outline {
+  background: transparent;
+  color: var(--ink);
+  border: 1.5px solid var(--ink);
+}
+.chip.orange { background: var(--orange); color: var(--ink); }
+.chip.teal { background: var(--teal); color: var(--cream); }
+
+/* Card */
+.card {
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+
+/* Inputs */
+input, textarea {
+  font-family: var(--font-body);
+  font-size: 16px; /* prevents iOS zoom */
+  color: var(--ink);
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  width: 100%;
+  outline: none;
+}
+input:focus, textarea:focus {
+  background: #fff7e6;
+  box-shadow: 0 0 0 3px rgba(232,147,42,0.3);
+}
+input::placeholder { color: var(--mute); }
+
+/* Nav header */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--cream);
+  border-bottom: 1.5px solid var(--ink);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.topbar .brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 16px;
+  text-decoration: none;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+.topbar .brand img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid var(--ink);
+}
+
+/* Vinyl spinning decoration */
+.vinyl {
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, var(--orange) 0 14%, transparent 14.5%),
+    radial-gradient(circle at center, var(--ink) 14.5% 18%, transparent 18.5%),
+    repeating-radial-gradient(circle at center, var(--ink) 18.5% 18.7%, #1a1917 18.7% 19.2%),
+    var(--ink);
+  position: relative;
+}
+.vinyl::after {
+  content: "";
+  position: absolute;
+  inset: 48%;
+  background: var(--cream);
+  border-radius: 50%;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 4s linear infinite; }
+
+/* Divider w/ dots like a vinyl groove */
+.groove {
+  height: 1px;
+  background: repeating-linear-gradient(to right, var(--ink) 0 4px, transparent 4px 8px);
+  opacity: 0.5;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 0; height: 0; }
+
+/* Utility */
+.stack > * + * { margin-top: var(--s, 12px); }
+.row { display: flex; align-items: center; gap: 10px; }
+.between { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.muted { color: var(--mute); }
+.small { font-size: 12px; }
+.xs { font-size: 11px; }
+
+/* Page transition */
+.page { animation: pageIn 0.35s ease; }
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tweaks panel */
+.tweaks-panel {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 2000;
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius);
+  padding: 14px;
+  width: 240px;
+  box-shadow: 4px 4px 0 var(--ink);
+  font-family: var(--font-body);
+  font-size: 13px;
+}
+.tweaks-panel h4 {
+  margin: 0 0 10px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.tweaks-panel label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 0;
+}
+.tweaks-panel input[type="color"] {
+  width: 32px;
+  height: 24px;
+  padding: 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.tweaks-panel select {
+  font-family: var(--font-body);
+  padding: 4px 6px;
+  border: 1px solid var(--ink);
+  border-radius: 4px;
+  background: var(--cream);
+}
+
+/* Hide on desktop-wide when not needed — stay mobile first */
+@media (min-width: 560px) {
+  .app {
+    margin-top: 24px;
+    margin-bottom: 24px;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1.5px solid var(--ink);
+  }
+  body {
+    background: #ddd0b8;
+  }
+}
