@@ -175,49 +175,28 @@ function Vinyl({ size = 120, spinning = false, accent = "#E8932A" }) {
   );
 }
 
-// ---------- QR code placeholder (stylized SVG) ----------
-function QRCode({ size = 160, label = "#request" }) {
-  // Deterministic pseudo-QR — visually convincing but obviously not a scannable real code.
-  const grid = 21;
-  const cell = size / grid;
-  const seed = 12345;
-  const rand = (i, j) => {
-    const v = Math.sin((i * 92837 + j * 173) + seed) * 10000;
-    return (v - Math.floor(v)) > 0.5;
-  };
-  const finder = (cx, cy) => (
-    <g key={`${cx}-${cy}`}>
-      <rect x={cx*cell} y={cy*cell} width={7*cell} height={7*cell} fill="#22201E"/>
-      <rect x={(cx+1)*cell} y={(cy+1)*cell} width={5*cell} height={5*cell} fill="#F1E4CE"/>
-      <rect x={(cx+2)*cell} y={(cy+2)*cell} width={3*cell} height={3*cell} fill="#22201E"/>
-    </g>
-  );
-  const cells = [];
-  for (let i = 0; i < grid; i++) {
-    for (let j = 0; j < grid; j++) {
-      // Skip finder regions
-      const inFinder =
-        (i < 8 && j < 8) ||
-        (i < 8 && j > 12) ||
-        (i > 12 && j < 8);
-      if (inFinder) continue;
-      if (rand(i, j)) {
-        cells.push(<rect key={`${i}-${j}`} x={i*cell} y={j*cell} width={cell} height={cell} fill="#22201E"/>);
-      }
-    }
-  }
+// ---------- QR code (real, scannable) ----------
+const _QRLib = window.QRCode;
+function QRCode({ size = 160, label, value }) {
+  const ref = React.useRef(null);
+  const url = value || (window.location.origin + window.location.pathname + "#request");
+  React.useEffect(() => {
+    if (!ref.current || !_QRLib) return;
+    ref.current.innerHTML = "";
+    new _QRLib(ref.current, {
+      text: url, width: size, height: size,
+      colorDark: "#22201E", colorLight: "#F7ECD8",
+      correctLevel: _QRLib.CorrectLevel.M,
+    });
+  }, [url, size]);
   return (
     <div style={{ display: "inline-block", background: "#F7ECD8", padding: 10, border: "1.5px solid #22201E", borderRadius: 10 }}>
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ display: "block" }}>
-        <rect width={size} height={size} fill="#F7ECD8"/>
-        {cells}
-        {finder(0, 0)}
-        {finder(14, 0)}
-        {finder(0, 14)}
-      </svg>
-      <div style={{ textAlign: "center", fontFamily: "var(--font-mono)", fontSize: 10, marginTop: 6, letterSpacing: "0.1em", color: "#22201E" }}>
-        {label}
-      </div>
+      <div ref={ref}/>
+      {label && (
+        <div style={{ textAlign: "center", fontFamily: "var(--font-mono)", fontSize: 10, marginTop: 6, letterSpacing: "0.1em", color: "#22201E" }}>
+          {label}
+        </div>
+      )}
     </div>
   );
 }
