@@ -22,7 +22,7 @@ function useRequestStore() {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) return JSON.parse(raw);
     } catch (e) {}
-    return DEFAULT_REQUESTS();
+    return [];
   });
 
   useEffect(() => {
@@ -57,13 +57,6 @@ function useRequestStore() {
   return { requests, add, update, remove };
 }
 
-function DEFAULT_REQUESTS() {
-  return [
-    { id: "seed-1", title: "One More Time", artist: "Daft Punk", requester: "Giulia", votes: 7, status: "queued", ts: Date.now() - 1000*60*4 },
-    { id: "seed-2", title: "Blue Monday", artist: "New Order", requester: "Marco", votes: 5, status: "queued", ts: Date.now() - 1000*60*9 },
-    { id: "seed-3", title: "I Feel Love", artist: "Donna Summer", requester: "Anon", votes: 3, status: "playing", ts: Date.now() - 1000*60*2 },
-  ];
-}
 
 
 // ---------- CSV catalog loader ----------
@@ -256,5 +249,4 @@ function TopBar({ route, navigate }) {
 // Export to window for other files
 Object.assign(window, {
   useHashRoute, useRequestStore, useCatalog, AlbumArt, Vinyl, QRCode, TopBar,
-  DEFAULT_REQUESTS,
 });
