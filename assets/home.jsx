@@ -8,6 +8,15 @@ const GENRES = ["House", "Tech House", "Italodisco", "New Wave", "Punk / Rock", 
 
 function HomePage({ navigate, djName, bio }) {
   const [qrOpen, setQrOpen] = React.useState(false);
+  const [pwOpen, setPwOpen] = React.useState(false);
+  const [pw, setPw] = React.useState("");
+  const [shake, setShake] = React.useState(false);
+
+  const handlePw = (e) => {
+    e.preventDefault();
+    if (pw === "aco") { navigate("monitor"); setPwOpen(false); setPw(""); }
+    else { setShake(true); setPw(""); setTimeout(() => setShake(false), 500); }
+  };
 
   return (
     <div className="page" data-screen-label="01 Home">
@@ -255,9 +264,48 @@ function HomePage({ navigate, djName, bio }) {
         }}>
           info@djaco.it
         </a>
-        <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--mute)", marginTop: 28, letterSpacing: "0.1em" }}>
-          © 2026 · Dj Aco
+        <div style={{ marginTop: 28, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--mute)", letterSpacing: "0.1em" }}>
+            © 2026 · Dj Aco
+          </div>
+          <button
+            onClick={() => { setPwOpen(v => !v); setPw(""); }}
+            style={{ background: "transparent", border: "none", cursor: "pointer", opacity: 0.25, padding: 4, lineHeight: 1 }}
+            title=""
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cream)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </button>
         </div>
+
+        {pwOpen && (
+          <form onSubmit={handlePw} style={{ marginTop: 12, animation: shake ? "none" : "pageIn 0.2s ease" }}>
+            <div style={{
+              display: "flex", gap: 8,
+              animation: shake ? "shake 0.4s ease" : "none",
+            }}>
+              <input
+                type="password"
+                value={pw}
+                onChange={e => setPw(e.target.value)}
+                placeholder="password"
+                autoFocus
+                style={{
+                  flex: 1, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)",
+                  color: "var(--cream)", borderRadius: 8, padding: "8px 12px",
+                  fontFamily: "var(--font-mono)", fontSize: 12, letterSpacing: "0.1em",
+                }}
+              />
+              <button type="submit" style={{
+                background: "var(--orange)", border: "none", borderRadius: 8,
+                padding: "8px 14px", cursor: "pointer", fontFamily: "var(--font-mono)",
+                fontSize: 11, color: "var(--ink)", letterSpacing: "0.1em",
+              }}>→</button>
+            </div>
+          </form>
+        )}
       </footer>
     </div>
   );
