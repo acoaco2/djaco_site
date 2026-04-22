@@ -196,7 +196,7 @@ function DJPage({ navigate, store }) {
   );
 }
 
-function MonitorPage({ store }) {
+function MonitorPage({ store, navigate }) {
   const [now, setNow] = React.useState(Date.now());
   const [countdown, setCountdown] = React.useState(10);
 
@@ -221,6 +221,16 @@ function MonitorPage({ store }) {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 40 }}>
         <div>
+          <button
+            onClick={() => navigate("home")}
+            style={{
+              background: "transparent", border: "none", cursor: "pointer",
+              fontFamily: "var(--font-mono)", fontSize: 11, color: "rgba(255,255,255,0.35)",
+              letterSpacing: "0.1em", padding: 0, marginBottom: 10,
+            }}
+            onMouseEnter={e => e.currentTarget.style.color = "var(--cream)"}
+            onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.35)"}
+          >← home</button>
           <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.2em", color: "var(--orange)", marginBottom: 6 }}>
             ● CLASSIFICA DEL GIORNO
           </div>

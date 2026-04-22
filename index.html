@@ -69,7 +69,7 @@ function App() {
     if (labels[route]) window.parent.postMessage({ slideIndexChanged: labels[route] - 1 }, "*");
   }, [route]);
 
-  if (route === "monitor") return <MonitorPage store={store}/>;
+  if (route === "monitor") return <MonitorPage store={store} navigate={navigate}/>;
 
   let Page;
   if (route === "request") Page = <RequestPage navigate={navigate} store={store}/>;
