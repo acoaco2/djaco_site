@@ -207,10 +207,9 @@ function MonitorPage({ store }) {
   }, []);
 
   const todayStr = new Date(now).toDateString();
-  const top = store.requests
-    .filter(r => new Date(r.ts).toDateString() === todayStr)
-    .sort((a, b) => b.votes - a.votes)
-    .slice(0, 5);
+  const todayAll = store.requests.filter(r => new Date(r.ts).toDateString() === todayStr);
+  const top    = todayAll.filter(r => r.status !== "played").sort((a, b) => b.votes - a.votes).slice(0, 5);
+  const played = todayAll.filter(r => r.status === "played").sort((a, b) => b.votes - a.votes);
 
   const medals = ["var(--orange)", "#aaaaaa", "#cd7f32"];
 
@@ -219,6 +218,7 @@ function MonitorPage({ store }) {
       background: "var(--ink)", color: "var(--cream)",
       minHeight: "100vh", padding: "40px 32px", boxSizing: "border-box",
     }}>
+      {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 40 }}>
         <div>
           <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.2em", color: "var(--orange)", marginBottom: 6 }}>
@@ -234,12 +234,13 @@ function MonitorPage({ store }) {
         </div>
       </div>
 
+      {/* Top 5 */}
       {top.length === 0 ? (
         <div style={{ marginTop: 80, textAlign: "center", fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--cream-2)", letterSpacing: "0.1em" }}>
           Nessuna richiesta ancora oggi.
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           {top.map((r, i) => (
             <div key={r.id} style={{ display: "flex", alignItems: "center", gap: 24 }}>
               <div style={{
@@ -260,11 +261,49 @@ function MonitorPage({ store }) {
                   {r.artist}
                 </div>
               </div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 40, color: "var(--orange)", flexShrink: 0 }}>
-                {r.votes}
+              <div style={{ display: "flex", alignItems: "center", gap: 16, flexShrink: 0 }}>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 40, color: "var(--orange)" }}>
+                  {r.votes}
+                </div>
+                <button
+                  onClick={() => store.update(r.id, { status: "played" })}
+                  title="Segna come suonata"
+                  style={{
+                    width: 40, height: 40, borderRadius: "50%",
+                    background: "transparent", border: "1.5px solid rgba(255,255,255,0.25)",
+                    color: "rgba(255,255,255,0.4)", fontSize: 18, cursor: "pointer",
+                    display: "grid", placeItems: "center", transition: "all 0.15s",
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--orange)"; e.currentTarget.style.color = "var(--orange)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)"; e.currentTarget.style.color = "rgba(255,255,255,0.4)"; }}
+                >✓</button>
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Storico */}
+      {played.length > 0 && (
+        <div style={{ marginTop: 48, borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: 24 }}>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.2em", color: "rgba(255,255,255,0.3)", marginBottom: 14 }}>
+            SUONATE
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {played.map(r => (
+              <div key={r.id} style={{ display: "flex", alignItems: "center", gap: 16, opacity: 0.4 }}>
+                <div style={{ flex: 1, minWidth: 0, textDecoration: "line-through", fontSize: 16, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {r.title}
+                </div>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--cream-2)", flexShrink: 0 }}>
+                  {r.artist}
+                </div>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, flexShrink: 0 }}>
+                  {r.votes}v
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
