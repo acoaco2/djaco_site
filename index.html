@@ -73,7 +73,6 @@ function App() {
 
   let Page;
   if (route === "request") Page = <RequestPage navigate={navigate} store={store}/>;
-  else if (route === "dj") Page = <DJPage navigate={navigate} store={store}/>;
   else Page = <HomePage navigate={navigate} djName={tweaks.djName} bio={tweaks.bio}/>;
 
   return (

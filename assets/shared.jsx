@@ -231,17 +231,10 @@ function TopBar({ route, navigate }) {
         <span style={{ textTransform: "none" }}>Dj Aco</span>
       </a>
       <div className="row" style={{ gap: 6 }}>
-        {route === "dj" ? (
-          <span className="chip orange">LIVE BOOTH</span>
-        ) : route === "request" ? (
+        {route === "request" && (
           <a href="#home" onClick={(e) => { e.preventDefault(); navigate("home"); }}
              style={{ fontFamily: "var(--font-mono)", fontSize: 12, textDecoration: "none", color: "var(--ink)" }}>
             ← back
-          </a>
-        ) : (
-          <a href="#dj" onClick={(e) => { e.preventDefault(); navigate("dj"); }}
-             style={{ fontFamily: "var(--font-mono)", fontSize: 12, textDecoration: "none", color: "var(--ink)", opacity: 0.5 }}>
-            booth
           </a>
         )}
       </div>
