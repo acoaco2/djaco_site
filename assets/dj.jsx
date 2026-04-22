@@ -211,6 +211,7 @@ function MonitorPage({ store, navigate }) {
   const top    = todayAll.filter(r => r.status !== "played").sort((a, b) => b.votes - a.votes).slice(0, 5);
   const played = todayAll.filter(r => r.status === "played").sort((a, b) => b.votes - a.votes);
 
+  const [confirmReset, setConfirmReset] = React.useState(false);
   const medals = ["var(--orange)", "#aaaaaa", "#cd7f32"];
 
   const exportCsv = () => {
@@ -272,7 +273,7 @@ function MonitorPage({ store, navigate }) {
               onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)"; e.currentTarget.style.color = "rgba(255,255,255,0.3)"; }}
             >ESPORTA</button>
             <button
-              onClick={() => { if (window.confirm("Hai esportato la classifica? Il reset è irreversibile.")) store.removeMany(top.map(r => r.id)); }}
+              onClick={() => setConfirmReset(true)}
               style={{
                 background: "transparent", border: "1px solid rgba(255,255,255,0.15)",
                 color: "rgba(255,255,255,0.3)", borderRadius: 6, padding: "3px 8px",
@@ -331,6 +332,39 @@ function MonitorPage({ store, navigate }) {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Dialog conferma reset */}
+      {confirmReset && (
+        <div style={{
+          position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)",
+          display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100,
+        }}>
+          <div style={{
+            background: "#2a2724", border: "1.5px solid rgba(255,255,255,0.15)",
+            borderRadius: 14, padding: "28px 32px", textAlign: "center", minWidth: 260,
+          }}>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--cream)", marginBottom: 20, letterSpacing: "0.05em" }}>
+              Vuoi esportare la classifica?
+            </div>
+            <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
+              <button
+                onClick={() => { exportCsv(); store.removeMany(top.map(r => r.id)); setConfirmReset(false); }}
+                style={{
+                  background: "var(--orange)", border: "none", borderRadius: 8,
+                  padding: "8px 22px", fontFamily: "var(--font-mono)", fontSize: 11,
+                  letterSpacing: "0.1em", color: "var(--ink)", cursor: "pointer",
+                }}>SÌ</button>
+              <button
+                onClick={() => { store.removeMany(top.map(r => r.id)); setConfirmReset(false); }}
+                style={{
+                  background: "transparent", border: "1px solid rgba(255,255,255,0.25)", borderRadius: 8,
+                  padding: "8px 22px", fontFamily: "var(--font-mono)", fontSize: 11,
+                  letterSpacing: "0.1em", color: "var(--cream-2)", cursor: "pointer",
+                }}>NO</button>
+            </div>
+          </div>
         </div>
       )}
 
