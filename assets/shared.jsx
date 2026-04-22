@@ -65,34 +65,66 @@ function DEFAULT_REQUESTS() {
   ];
 }
 
-// ---------- Mock Spotify-style track catalogue ----------
-const MOCK_CATALOG = [
-  { title: "One More Time", artist: "Daft Punk", album: "Discovery", dur: "5:20", color: "#7C4A2B" },
-  { title: "Around the World", artist: "Daft Punk", album: "Homework", dur: "7:09", color: "#3A6B7A" },
-  { title: "Blue Monday", artist: "New Order", album: "Power, Corruption & Lies", dur: "7:30", color: "#2A5260" },
-  { title: "Bizarre Love Triangle", artist: "New Order", album: "Brotherhood", dur: "4:20", color: "#4B3E6E" },
-  { title: "I Feel Love", artist: "Donna Summer", album: "I Remember Yesterday", dur: "5:52", color: "#D46B1F" },
-  { title: "Italoconnection", artist: "Sabrina", album: "Boys", dur: "4:02", color: "#C1432B" },
-  { title: "Self Control", artist: "Raf", album: "Self Control", dur: "4:08", color: "#8A5A2B" },
-  { title: "Dolce Vita", artist: "Ryan Paris", album: "Dolce Vita", dur: "3:40", color: "#E8932A" },
-  { title: "Tarzan Boy", artist: "Baltimora", album: "Living in the Background", dur: "4:25", color: "#B8732A" },
-  { title: "Pump Up The Jam", artist: "Technotronic", album: "Pump Up The Jam", dur: "3:43", color: "#3A6B7A" },
-  { title: "Music Sounds Better With You", artist: "Stardust", album: "Single", dur: "7:11", color: "#D46B1F" },
-  { title: "You & Me", artist: "Flume ft. Disclosure", album: "You & Me (Remix)", dur: "5:15", color: "#4B3E6E" },
-  { title: "Losing It", artist: "Fisher", album: "Losing It", dur: "3:44", color: "#2A5260" },
-  { title: "Jamming", artist: "Bob Marley", album: "Exodus", dur: "3:31", color: "#4B6E3E" },
-  { title: "Should I Stay or Should I Go", artist: "The Clash", album: "Combat Rock", dur: "3:06", color: "#C1432B" },
-  { title: "London Calling", artist: "The Clash", album: "London Calling", dur: "3:19", color: "#22201E" },
-  { title: "A Message to You, Rudy", artist: "The Specials", album: "The Specials", dur: "2:53", color: "#3A6B7A" },
-  { title: "Ghost Town", artist: "The Specials", album: "Ghost Town", dur: "6:08", color: "#4B3E6E" },
-  { title: "Blitzkrieg Bop", artist: "Ramones", album: "Ramones", dur: "2:14", color: "#C1432B" },
-  { title: "Basket Case", artist: "Green Day", album: "Dookie", dur: "3:03", color: "#4B6E3E" },
-  { title: "Love Will Tear Us Apart", artist: "Joy Division", album: "Substance", dur: "3:26", color: "#22201E" },
-  { title: "Enola Gay", artist: "OMD", album: "Organisation", dur: "3:32", color: "#3A6B7A" },
-  { title: "Tainted Love", artist: "Soft Cell", album: "Non-Stop Erotic Cabaret", dur: "2:40", color: "#C1432B" },
-  { title: "Personal Jesus", artist: "Depeche Mode", album: "Violator", dur: "4:56", color: "#4B3E6E" },
-  { title: "In the Air Tonight", artist: "Phil Collins", album: "Face Value", dur: "5:35", color: "#2A5260" },
-];
+
+// ---------- CSV catalog loader ----------
+function parseCSVLine(line) {
+  const result = [];
+  let current = "";
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') {
+      if (inQuotes && line[i + 1] === '"') { current += '"'; i++; }
+      else inQuotes = !inQuotes;
+    } else if (ch === ',' && !inQuotes) {
+      result.push(current.trim());
+      current = "";
+    } else {
+      current += ch;
+    }
+  }
+  result.push(current.trim());
+  return result;
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split(/\r?\n/).filter(l => l.trim());
+  if (lines.length < 2) return [];
+  const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase().replace(/['"]/g, ""));
+  const col = (row, ...names) => {
+    for (const name of names) {
+      const idx = headers.indexOf(name);
+      if (idx !== -1 && row[idx] != null) return row[idx].replace(/^["']|["']$/g, "").trim();
+    }
+    return "";
+  };
+  const COLORS = ["#7C4A2B","#3A6B7A","#2A5260","#4B3E6E","#D46B1F","#C1432B","#8A5A2B","#E8932A","#B8732A","#4B6E3E","#22201E"];
+  return lines.slice(1).map((line, i) => {
+    const row = parseCSVLine(line);
+    const title = col(row, "title", "titolo", "traccia", "track", "nome");
+    const artist = col(row, "artist", "artista", "artisti");
+    if (!title && !artist) return null;
+    return {
+      title: title || "Unknown",
+      artist: artist || "Unknown",
+      album: col(row, "album"),
+      dur: col(row, "duration", "durata", "dur", "length", "tempo"),
+      color: COLORS[i % COLORS.length],
+    };
+  }).filter(Boolean);
+}
+
+// undefined = loading, null = error/unavailable, array = ok
+function useCatalog() {
+  const [catalog, setCatalog] = React.useState(undefined);
+  React.useEffect(() => {
+    fetch("uploads/tracce.csv")
+      .then(r => { if (!r.ok) throw new Error(); return r.text(); })
+      .then(text => { const parsed = parseCSV(text); setCatalog(parsed.length > 0 ? parsed : null); })
+      .catch(() => setCatalog(null));
+  }, []);
+  return catalog;
+}
 
 // ---------- Album art placeholder (no external images) ----------
 function AlbumArt({ track, size = 52 }) {
@@ -223,6 +255,6 @@ function TopBar({ route, navigate }) {
 
 // Export to window for other files
 Object.assign(window, {
-  useHashRoute, useRequestStore, MOCK_CATALOG, AlbumArt, Vinyl, QRCode, TopBar,
+  useHashRoute, useRequestStore, useCatalog, AlbumArt, Vinyl, QRCode, TopBar,
   DEFAULT_REQUESTS,
 });

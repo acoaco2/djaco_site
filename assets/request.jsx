@@ -1,6 +1,7 @@
 // Song request page — Spotify-style mock search
 
 function RequestPage({ navigate, store }) {
+  const catalog = useCatalog();
   const [query, setQuery] = React.useState("");
   const [selected, setSelected] = React.useState(null);
   const [name, setName] = React.useState("");
@@ -8,21 +9,30 @@ function RequestPage({ navigate, store }) {
   const inputRef = React.useRef(null);
 
   const results = React.useMemo(() => {
+    if (!catalog) return [];
     const q = query.trim().toLowerCase();
     if (!q) return [];
-    return MOCK_CATALOG
+    return catalog
       .filter(t =>
         t.title.toLowerCase().includes(q) ||
         t.artist.toLowerCase().includes(q) ||
-        t.album.toLowerCase().includes(q)
+        (t.album && t.album.toLowerCase().includes(q))
       )
       .slice(0, 8);
-  }, [query]);
+  }, [query, catalog]);
 
   const suggestions = React.useMemo(() => {
-    // Shuffle mildly stable selection
-    return MOCK_CATALOG.slice(0, 6);
-  }, []);
+    return catalog ? catalog.slice(0, 6) : [];
+  }, [catalog]);
+
+  if (catalog === undefined) return null;
+  if (catalog === null) return (
+    <div className="page" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: 300 }}>
+      <p style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--mute)", letterSpacing: "0.1em" }}>
+        Richieste disattivate
+      </p>
+    </div>
+  );
 
   const handleSubmit = () => {
     if (!selected) return;
