@@ -95,7 +95,7 @@ function RequestPage({ navigate, store }) {
           by {submitted.artist}
         </p>
         <p style={{ fontSize: 13, color: "var(--ink-soft)", maxWidth: 280, margin: "0 auto 28px", lineHeight: 1.5 }}>
-          Aco l'ha ricevuta in consolle. Se si incastra nel set, parte.
+          Aco l'ha ricevuta in console. Se si incastra nel set, parte.
         </p>
         <button className="btn" onClick={() => setSubmitted(null)}>
           Request another
