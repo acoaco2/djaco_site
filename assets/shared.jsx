@@ -182,12 +182,14 @@ function QRCode({ size = 160, label, value }) {
   const url = value || (window.location.origin + window.location.pathname + "#request");
   React.useEffect(() => {
     if (!ref.current || !_QRLib) return;
-    ref.current.innerHTML = "";
-    new _QRLib(ref.current, {
-      text: url, width: size, height: size,
-      colorDark: "#22201E", colorLight: "#F7ECD8",
-      correctLevel: _QRLib.CorrectLevel.M,
-    });
+    try {
+      ref.current.innerHTML = "";
+      new _QRLib(ref.current, {
+        text: url, width: size, height: size,
+        colorDark: "#22201E", colorLight: "#F7ECD8",
+        correctLevel: _QRLib.CorrectLevel.M,
+      });
+    } catch (e) {}
   }, [url, size]);
   return (
     <div style={{ display: "inline-block", background: "#F7ECD8", padding: 10, border: "1.5px solid #22201E", borderRadius: 10 }}>

@@ -113,6 +113,7 @@ function HomePage({ navigate, djName, bio }) {
         </button>
         <div style={{ marginTop: 10, textAlign: "center" }}>
           <button
+            type="button"
             onClick={() => setQrOpen(v => !v)}
             style={{
               background: "transparent",
