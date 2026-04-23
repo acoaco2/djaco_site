@@ -131,7 +131,7 @@ function HomePage({ navigate, djName, bio }) {
         </div>
         {qrOpen && (
           <div style={{ textAlign: "center", marginTop: 8, animation: "pageIn 0.25s ease" }}>
-            <QRCode size={160} label="djaco.live/request"/>
+            <QRCode size={160}/>
           </div>
         )}
       </section>
