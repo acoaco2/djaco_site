@@ -176,24 +176,13 @@ function Vinyl({ size = 120, spinning = false, accent = "#E8932A" }) {
 }
 
 // ---------- QR code (real, scannable) ----------
-const _QRLib = window.QRCode;
 function QRCode({ size = 160, label, value }) {
-  const ref = React.useRef(null);
   const url = value || (window.location.origin + window.location.pathname + "#request");
-  React.useEffect(() => {
-    if (!ref.current || !_QRLib) return;
-    try {
-      ref.current.innerHTML = "";
-      new _QRLib(ref.current, {
-        text: url, width: size, height: size,
-        colorDark: "#22201E", colorLight: "#F7ECD8",
-        correctLevel: _QRLib.CorrectLevel.M,
-      });
-    } catch (e) {}
-  }, [url, size]);
+  const src = "https://api.qrserver.com/v1/create-qr-code/?size=" + size + "x" + size +
+    "&data=" + encodeURIComponent(url) + "&bgcolor=F7ECD8&color=22201E&qzone=1&format=svg";
   return (
     <div style={{ display: "inline-block", background: "#F7ECD8", padding: 10, border: "1.5px solid #22201E", borderRadius: 10 }}>
-      <div ref={ref}/>
+      <img src={src} width={size} height={size} style={{ display: "block" }} alt="QR Code"/>
       {label && (
         <div style={{ textAlign: "center", fontFamily: "var(--font-mono)", fontSize: 10, marginTop: 6, letterSpacing: "0.1em", color: "#22201E" }}>
           {label}

@@ -127,7 +127,7 @@ function HomePage({ navigate, djName, bio }) {
               padding: 6,
             }}
           >
-            {qrOpen ? "↑ hide QR" : "↓ or scan at the gig"}
+            {qrOpen ? "↑ chiudi QR" : "QR Code"}
           </button>
         </div>
         {qrOpen && (
