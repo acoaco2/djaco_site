@@ -256,13 +256,13 @@ function HomePage({ navigate, djName, bio }) {
         <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.15em", color: "var(--cream-2)", marginBottom: 4 }}>
           BOOKING
         </div>
-        <a href="mailto:info@djaco.it" style={{
+        <a href="mailto:achillecipriani@gmail.com" style={{
           fontFamily: "var(--font-display)", fontSize: 18,
           color: "var(--cream)", textDecoration: "none",
           borderBottom: "1.5px solid var(--orange)", paddingBottom: 2,
           textTransform: "none",
         }}>
-          info@djaco.it
+          achillecipriani@gmail.com
         </a>
         <div style={{ marginTop: 28, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--mute)", letterSpacing: "0.1em" }}>
