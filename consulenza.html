@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Consulenza · Achille Cipriani</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #F1E4CE;
+      --cream-2: #E8D8BC;
+      --paper: #F7ECD8;
+      --ink: #22201E;
+      --ink-soft: #3A352F;
+      --mute: #7A6F60;
+      --orange: #E8932A;
+      --orange-deep: #D46B1F;
+      --font-display: "Archivo Black", "Arial Black", sans-serif;
+      --font-body: "Inter", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+      --radius: 14px;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      background: #000;
+    }
+
+    /* ── Layout: two panels side by side, full viewport ── */
+    .split {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── LEFT PANEL — dark/consulenza ── */
+    .panel-left {
+      position: absolute;
+      inset: 0;
+      background: #0a0a0a;
+      clip-path: polygon(0 0, 65% 0, 100% 100%, 0 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px 8vw 60px 6vw;
+    }
+
+    /* subtle noise on dark panel */
+    .panel-left::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.04;
+      pointer-events: none;
+    }
+
+    .left-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 32px;
+    }
+
+    .left-heading {
+      font-family: var(--font-display);
+      font-size: clamp(52px, 8vw, 108px);
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      color: #f0f0f0;
+    }
+
+    .left-heading span {
+      color: #fff;
+      display: block;
+    }
+
+    .left-divider {
+      width: 48px;
+      height: 2px;
+      background: #f0f0f0;
+      margin: 40px 0;
+      opacity: 0.15;
+    }
+
+    .left-body {
+      font-family: var(--font-body);
+      font-size: clamp(14px, 1.4vw, 17px);
+      line-height: 1.7;
+      color: #888;
+      max-width: 380px;
+    }
+
+    .left-contact {
+      margin-top: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .left-contact-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #444;
+    }
+
+    .left-contact a {
+      font-family: var(--font-body);
+      font-size: 15px;
+      color: #c8c8c8;
+      text-decoration: none;
+      border-bottom: 1px solid #444;
+      padding-bottom: 2px;
+      width: fit-content;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .left-contact a:hover {
+      color: #fff;
+      border-color: #888;
+    }
+
+    /* ── TEAR EDGE — the diagonal shadow line ── */
+    .tear {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      /* positioned at the diagonal: 65vw at top, 100vw at bottom */
+      left: 0;
+      width: 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .tear::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      /* shadow along the diagonal using a rotated gradient */
+      background: linear-gradient(
+        to right,
+        transparent calc(63% - 2px),
+        rgba(255,255,255,0.06) calc(63%),
+        rgba(255,255,255,0.12) calc(63.5%),
+        rgba(0,0,0,0.5) calc(64%),
+        transparent calc(66%)
+      );
+      /* skew doesn't work for a true diagonal; we use a transform on a pseudo */
+    }
+
+    /* ── RIGHT PANEL — DJ Aco style ── */
+    .panel-right {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 42%;
+      clip-path: polygon(35% 0, 100% 0, 100% 100%, 0 100%);
+      background: var(--cream);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-end;
+      padding: 60px 5vw 60px 10vw;
+      overflow: hidden;
+    }
+
+    /* paper grain on right */
+    .panel-right::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.35;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+    }
+
+    .right-inner {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 220px;
+      text-align: right;
+    }
+
+    .right-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--mute);
+      margin-bottom: 12px;
+    }
+
+    .right-name {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 4vw, 52px);
+      line-height: 0.92;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+
+    .right-name .dot {
+      color: var(--orange-deep);
+    }
+
+    .right-sub {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--mute);
+      margin-top: 10px;
+    }
+
+    .right-divider {
+      width: 100%;
+      height: 1px;
+      background: repeating-linear-gradient(
+        to right,
+        var(--ink) 0,
+        var(--ink) 4px,
+        transparent 4px,
+        transparent 8px
+      );
+      opacity: 0.2;
+      margin: 24px 0;
+    }
+
+    .right-desc {
+      font-family: var(--font-body);
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--mute);
+      margin-bottom: 28px;
+    }
+
+    .right-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--ink);
+      color: var(--cream);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 12px 20px;
+      border-radius: 999px;
+      box-shadow: 3px 3px 0 var(--orange-deep);
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+
+    .right-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 var(--orange-deep);
+    }
+
+    .right-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 var(--orange-deep);
+    }
+
+    .right-btn svg {
+      flex-shrink: 0;
+    }
+
+    /* vinyl decoration */
+    .vinyl-deco {
+      position: absolute;
+      bottom: -60px;
+      right: -60px;
+      width: 180px;
+      height: 180px;
+      opacity: 0.12;
+      animation: spin 8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── RESPONSIVE: stack on small screens ── */
+    @media (max-width: 640px) {
+      html, body { overflow: auto; }
+
+      .split {
+        height: auto;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .panel-left {
+        position: relative;
+        clip-path: none;
+        height: 60vh;
+        padding: 48px 24px 80px;
+      }
+
+      .panel-right {
+        position: relative;
+        clip-path: none;
+        width: 100%;
+        height: auto;
+        align-items: flex-start;
+        padding: 40px 24px 48px;
+        border-top: 2px solid var(--ink);
+      }
+
+      .right-inner {
+        text-align: left;
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="split">
+
+    <!-- LEFT: dark consulenza -->
+    <div class="panel-left">
+      <p class="left-label">Achille Cipriani — Consulenza</p>
+      <h1 class="left-heading">
+        <span>Consu-</span>
+        <span>lenza.</span>
+      </h1>
+      <div class="left-divider"></div>
+      <p class="left-body">
+        Strategie digitali, branding e comunicazione.<br />
+        Un approccio diretto, senza fronzoli.
+      </p>
+      <div class="left-contact">
+        <span class="left-contact-label">Contatti</span>
+        <a href="mailto:achillecipriani@gmail.com">achillecipriani@gmail.com</a>
+      </div>
+    </div>
+
+    <!-- Tear shadow line -->
+    <div class="tear"></div>
+
+    <!-- RIGHT: DJ Aco style -->
+    <div class="panel-right">
+      <!-- vinyl decoration -->
+      <svg class="vinyl-deco" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="60" cy="60" r="58" fill="#1a1a1a" stroke="#22201E" stroke-width="1.5"/>
+        <circle cx="60" cy="60" r="44" fill="none" stroke="#2a2a2a" stroke-width="8"/>
+        <circle cx="60" cy="60" r="34" fill="none" stroke="#222" stroke-width="6"/>
+        <circle cx="60" cy="60" r="24" fill="none" stroke="#2a2a2a" stroke-width="4"/>
+        <circle cx="60" cy="60" r="14" fill="#1a1a1a" stroke="#333" stroke-width="1"/>
+        <circle cx="60" cy="60" r="6" fill="#E8932A"/>
+        <circle cx="60" cy="60" r="2.5" fill="#22201E"/>
+      </svg>
+
+      <div class="right-inner">
+        <p class="right-label">anche —</p>
+        <h2 class="right-name">DJ ACO<span class="dot">.</span></h2>
+        <p class="right-sub">Selector · Mixer · Pista</p>
+        <div class="right-divider"></div>
+        <p class="right-desc">
+          House, Italo, New Wave.<br />Keep the floor moving.
+        </p>
+        <a class="right-btn" href="/index.html">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Vai al sito
+        </a>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
