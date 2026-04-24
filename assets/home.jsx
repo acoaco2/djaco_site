@@ -145,7 +145,7 @@ function HomePage({ navigate, djName, bio }) {
           § A01 — ABOUT
         </div>
         <h2 className="display" style={{ fontSize: 28, margin: "0 0 16px" }}>
-          Chi sono
+          Bio
         </h2>
         <p style={{ fontSize: 16, lineHeight: 1.55, color: "var(--ink-soft)", margin: 0, textWrap: "pretty" }}>
           {bio}
