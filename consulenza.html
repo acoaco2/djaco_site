@@ -12,31 +12,25 @@
 
     :root {
       --cream: #F1E4CE;
-      --cream-2: #E8D8BC;
       --paper: #F7ECD8;
       --ink: #22201E;
-      --ink-soft: #3A352F;
       --mute: #7A6F60;
       --orange: #E8932A;
       --orange-deep: #D46B1F;
       --font-display: "Archivo Black", "Arial Black", sans-serif;
       --font-body: "Inter", system-ui, -apple-system, sans-serif;
       --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
-      --radius: 14px;
     }
 
     html, body {
       height: 100%;
       overflow: hidden;
-    }
-
-    body {
+      background: #000;
       font-family: var(--font-body);
       -webkit-font-smoothing: antialiased;
-      background: #000;
     }
 
-    /* ── Layout: two panels side by side, full viewport ── */
+    /* ── Fullscreen container ── */
     .split {
       position: relative;
       width: 100vw;
@@ -44,88 +38,83 @@
       overflow: hidden;
     }
 
-    /* ── LEFT PANEL — dark/consulenza ── */
+    /* ── LEFT: consulenza (dark) ── */
     .panel-left {
       position: absolute;
       inset: 0;
-      background: #0a0a0a;
-      clip-path: polygon(0 0, 65% 0, 100% 100%, 0 100%);
+      background: #0c0c0c;
+      /* diagonal cut: top splits at 52%, bottom at 48% → average 50% */
+      clip-path: polygon(0 0, 56% 0, 44% 100%, 0 100%);
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 60px 8vw 60px 6vw;
+      padding: 5vh 5vw 5vh 6vw;
     }
 
-    /* subtle noise on dark panel */
-    .panel-left::before {
+    .panel-left::after {
       content: "";
       position: absolute;
       inset: 0;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-      opacity: 0.04;
+      opacity: 0.035;
       pointer-events: none;
     }
 
     .left-label {
       font-family: var(--font-mono);
-      font-size: 11px;
+      font-size: 10px;
       letter-spacing: 0.25em;
       text-transform: uppercase;
-      color: #555;
-      margin-bottom: 32px;
+      color: #444;
+      margin-bottom: 28px;
     }
 
     .left-heading {
       font-family: var(--font-display);
-      font-size: clamp(52px, 8vw, 108px);
+      font-size: clamp(44px, 7vw, 96px);
       line-height: 0.9;
       letter-spacing: -0.02em;
       text-transform: uppercase;
-      color: #f0f0f0;
-    }
-
-    .left-heading span {
       color: #fff;
-      display: block;
     }
 
     .left-divider {
-      width: 48px;
-      height: 2px;
-      background: #f0f0f0;
-      margin: 40px 0;
-      opacity: 0.15;
+      width: 40px;
+      height: 1px;
+      background: #fff;
+      opacity: 0.12;
+      margin: 32px 0;
     }
 
     .left-body {
       font-family: var(--font-body);
-      font-size: clamp(14px, 1.4vw, 17px);
+      font-size: clamp(13px, 1.3vw, 16px);
       line-height: 1.7;
-      color: #888;
-      max-width: 380px;
+      color: #777;
+      max-width: 320px;
     }
 
     .left-contact {
-      margin-top: 48px;
+      margin-top: 40px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
     }
 
     .left-contact-label {
       font-family: var(--font-mono);
-      font-size: 10px;
-      letter-spacing: 0.2em;
+      font-size: 9px;
+      letter-spacing: 0.25em;
       text-transform: uppercase;
-      color: #444;
+      color: #3a3a3a;
     }
 
     .left-contact a {
       font-family: var(--font-body);
-      font-size: 15px;
-      color: #c8c8c8;
+      font-size: 14px;
+      color: #bbb;
       text-decoration: none;
-      border-bottom: 1px solid #444;
+      border-bottom: 1px solid #333;
       padding-bottom: 2px;
       width: fit-content;
       transition: color 0.2s, border-color 0.2s;
@@ -133,58 +122,39 @@
 
     .left-contact a:hover {
       color: #fff;
-      border-color: #888;
+      border-color: #777;
     }
 
-    /* ── TEAR EDGE — the diagonal shadow line ── */
+    /* ── Tear shadow line (decorative) ── */
     .tear {
       position: absolute;
-      top: 0;
-      bottom: 0;
-      /* positioned at the diagonal: 65vw at top, 100vw at bottom */
-      left: 0;
-      width: 100%;
+      inset: 0;
       pointer-events: none;
       z-index: 10;
-    }
-
-    .tear::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      /* shadow along the diagonal using a rotated gradient */
       background: linear-gradient(
-        to right,
-        transparent calc(63% - 2px),
-        rgba(255,255,255,0.06) calc(63%),
-        rgba(255,255,255,0.12) calc(63.5%),
-        rgba(0,0,0,0.5) calc(64%),
-        transparent calc(66%)
+        105deg,
+        transparent calc(43.5% - 1px),
+        rgba(255,255,255,0.07) calc(43.5%),
+        rgba(255,255,255,0.14) 44%,
+        rgba(0,0,0,0.55) 44.5%,
+        transparent 46%
       );
-      /* skew doesn't work for a true diagonal; we use a transform on a pseudo */
     }
 
-    /* ── RIGHT PANEL — DJ Aco style ── */
+    /* ── RIGHT: DJ Aco (cream) ── */
     .panel-right {
       position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      width: 42%;
-      clip-path: polygon(35% 0, 100% 0, 100% 100%, 0 100%);
+      inset: 0;
       background: var(--cream);
+      clip-path: polygon(56% 0, 100% 0, 100% 100%, 44% 100%);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: flex-end;
-      padding: 60px 5vw 60px 10vw;
+      padding: 5vh 5vw 5vh 8vw;
       overflow: hidden;
     }
 
-    /* paper grain on right */
     .panel-right::before {
       content: "";
       position: absolute;
@@ -195,18 +165,31 @@
       pointer-events: none;
     }
 
+    /* spinning vinyl decoration */
+    .vinyl-deco {
+      position: absolute;
+      bottom: -50px;
+      right: -50px;
+      width: 200px;
+      height: 200px;
+      opacity: 0.1;
+      animation: spin 9s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
     .right-inner {
       position: relative;
       z-index: 1;
-      width: 100%;
-      max-width: 220px;
       text-align: right;
+      max-width: 240px;
     }
 
     .right-label {
       font-family: var(--font-mono);
-      font-size: 10px;
-      letter-spacing: 0.2em;
+      font-size: 9px;
+      letter-spacing: 0.25em;
       text-transform: uppercase;
       color: var(--mute);
       margin-bottom: 12px;
@@ -214,44 +197,40 @@
 
     .right-name {
       font-family: var(--font-display);
-      font-size: clamp(32px, 4vw, 52px);
-      line-height: 0.92;
+      font-size: clamp(36px, 4.5vw, 64px);
+      line-height: 0.9;
       letter-spacing: -0.01em;
       text-transform: uppercase;
       color: var(--ink);
     }
 
-    .right-name .dot {
-      color: var(--orange-deep);
-    }
+    .right-name .dot { color: var(--orange-deep); }
 
     .right-sub {
       font-family: var(--font-mono);
-      font-size: 10px;
-      letter-spacing: 0.15em;
+      font-size: 9px;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--mute);
       margin-top: 10px;
     }
 
-    .right-divider {
+    .right-groove {
       width: 100%;
       height: 1px;
       background: repeating-linear-gradient(
         to right,
-        var(--ink) 0,
-        var(--ink) 4px,
-        transparent 4px,
-        transparent 8px
+        var(--ink) 0, var(--ink) 4px,
+        transparent 4px, transparent 8px
       );
       opacity: 0.2;
-      margin: 24px 0;
+      margin: 22px 0;
     }
 
     .right-desc {
       font-family: var(--font-body);
       font-size: 13px;
-      line-height: 1.55;
+      line-height: 1.6;
       color: var(--mute);
       margin-bottom: 28px;
     }
@@ -263,11 +242,11 @@
       background: var(--ink);
       color: var(--cream);
       font-family: var(--font-mono);
-      font-size: 11px;
-      letter-spacing: 0.15em;
+      font-size: 10px;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
       text-decoration: none;
-      padding: 12px 20px;
+      padding: 13px 22px;
       border-radius: 999px;
       box-shadow: 3px 3px 0 var(--orange-deep);
       transition: transform 0.12s, box-shadow 0.12s;
@@ -283,26 +262,7 @@
       box-shadow: 1px 1px 0 var(--orange-deep);
     }
 
-    .right-btn svg {
-      flex-shrink: 0;
-    }
-
-    /* vinyl decoration */
-    .vinyl-deco {
-      position: absolute;
-      bottom: -60px;
-      right: -60px;
-      width: 180px;
-      height: 180px;
-      opacity: 0.12;
-      animation: spin 8s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* ── RESPONSIVE: stack on small screens ── */
+    /* ── MOBILE: stack top/bottom with horizontal tear ── */
     @media (max-width: 640px) {
       html, body { overflow: auto; }
 
@@ -315,24 +275,37 @@
 
       .panel-left {
         position: relative;
-        clip-path: none;
-        height: 60vh;
-        padding: 48px 24px 80px;
+        width: 100%;
+        height: 55vh;
+        clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+        padding: 48px 28px 72px;
+        align-items: flex-start;
+      }
+
+      .tear {
+        display: none;
       }
 
       .panel-right {
         position: relative;
-        clip-path: none;
         width: 100%;
         height: auto;
+        clip-path: polygon(0 0, 100% 10%, 100% 100%, 0 100%);
+        margin-top: -8vh;
         align-items: flex-start;
-        padding: 40px 24px 48px;
-        border-top: 2px solid var(--ink);
+        padding: 10vh 28px 52px;
       }
 
       .right-inner {
         text-align: left;
         max-width: 100%;
+      }
+
+      .vinyl-deco {
+        bottom: -30px;
+        right: -30px;
+        width: 140px;
+        height: 140px;
       }
     }
   </style>
@@ -340,17 +313,13 @@
 <body>
   <div class="split">
 
-    <!-- LEFT: dark consulenza -->
+    <!-- LEFT: consulenza -->
     <div class="panel-left">
-      <p class="left-label">Achille Cipriani — Consulenza</p>
-      <h1 class="left-heading">
-        <span>Consu-</span>
-        <span>lenza.</span>
-      </h1>
+      <p class="left-label">Achille Cipriani</p>
+      <h1 class="left-heading">Consu<br>lenza.</h1>
       <div class="left-divider"></div>
       <p class="left-body">
-        Strategie digitali, branding e comunicazione.<br />
-        Un approccio diretto, senza fronzoli.
+        Strategie digitali, branding<br>e comunicazione.
       </p>
       <div class="left-contact">
         <span class="left-contact-label">Contatti</span>
@@ -358,12 +327,11 @@
       </div>
     </div>
 
-    <!-- Tear shadow line -->
+    <!-- Tear shadow -->
     <div class="tear"></div>
 
-    <!-- RIGHT: DJ Aco style -->
+    <!-- RIGHT: DJ Aco -->
     <div class="panel-right">
-      <!-- vinyl decoration -->
       <svg class="vinyl-deco" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="60" cy="60" r="58" fill="#1a1a1a" stroke="#22201E" stroke-width="1.5"/>
         <circle cx="60" cy="60" r="44" fill="none" stroke="#2a2a2a" stroke-width="8"/>
@@ -378,12 +346,10 @@
         <p class="right-label">anche —</p>
         <h2 class="right-name">DJ ACO<span class="dot">.</span></h2>
         <p class="right-sub">Selector · Mixer · Pista</p>
-        <div class="right-divider"></div>
-        <p class="right-desc">
-          House, Italo, New Wave.<br />Keep the floor moving.
-        </p>
+        <div class="right-groove"></div>
+        <p class="right-desc">House, Italo,<br>New Wave.</p>
         <a class="right-btn" href="/index.html">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
             <path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
           Vai al sito
