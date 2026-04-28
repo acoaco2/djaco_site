@@ -13,49 +13,60 @@ function useHashRoute() {
   return [route, (r) => { window.location.hash = r; }];
 }
 
-// ---------- Shared request store (localStorage, cross-tab via storage event) ----------
-const STORAGE_KEY = "dj_aco_requests_v1";
-
+// ---------- Shared request store (Firebase Realtime Database) ----------
 function useRequestStore() {
-  const [requests, setRequests] = useState(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) return JSON.parse(raw);
-    } catch (e) {}
-    return [];
-  });
+  const [requests, setRequests] = useState([]);
+  const listenerRef = useRef(null);
 
   useEffect(() => {
-    const onStorage = (e) => {
-      if (e.key === STORAGE_KEY && e.newValue) {
-        try { setRequests(JSON.parse(e.newValue)); } catch (e) {}
-      }
+    const setup = () => {
+      const { db, ref: fbRef, onValue } = window.__firebase;
+      const unsubscribe = onValue(fbRef(db, "requests"), (snap) => {
+        const data = snap.val();
+        if (!data) { setRequests([]); return; }
+        setRequests(
+          Object.entries(data)
+            .map(([id, val]) => ({ ...val, id }))
+            .sort((a, b) => b.ts - a.ts)
+        );
+      });
+      listenerRef.current = unsubscribe;
     };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
+
+    if (window.__firebase) {
+      setup();
+    } else {
+      window.addEventListener("firebase-ready", setup, { once: true });
+    }
+
+    return () => { if (listenerRef.current) listenerRef.current(); };
   }, []);
 
-  const save = (next) => {
-    setRequests(next);
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch (e) {}
-  };
-
   const add = (req) => {
+    const { db, ref: fbRef, push: fbPush, set: fbSet } = window.__firebase;
+    const newRef = fbPush(fbRef(db, "requests"));
     const now = Date.now();
-    const next = [
-      { ...req, id: now + "-" + Math.random().toString(36).slice(2, 6), votes: 1, status: "queued", ts: now,
-        voteLog: [{ ts: now, requester: req.requester }] },
-      ...requests
-    ];
-    save(next);
+    fbSet(newRef, {
+      ...req,
+      id: newRef.key,
+      votes: 1,
+      status: "queued",
+      ts: now,
+      voteLog: [{ ts: now, requester: req.requester }],
+    });
   };
 
   const update = (id, patch) => {
-    save(requests.map(r => r.id === id ? { ...r, ...patch } : r));
+    const { db, ref: fbRef, update: fbUpdate } = window.__firebase;
+    fbUpdate(fbRef(db, `requests/${id}`), patch);
   };
 
-  const remove = (id) => save(requests.filter(r => r.id !== id));
-  const removeMany = (ids) => save(requests.filter(r => !ids.includes(r.id)));
+  const remove = (id) => {
+    const { db, ref: fbRef, remove: fbRemove } = window.__firebase;
+    fbRemove(fbRef(db, `requests/${id}`));
+  };
+
+  const removeMany = (ids) => ids.forEach(id => remove(id));
 
   return { requests, add, update, remove, removeMany };
 }
