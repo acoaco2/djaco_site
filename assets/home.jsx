@@ -1,7 +1,7 @@
 // Home / intro page for Dj Aco
 
 const GIGS = [
-  { date: "19 MAG", day: "MAR", venue: "Serata Privata", city: "Garbagnate Monastero", note: "Private event" },
+  { date: "28 LUG", day: "LUN", venue: "Serata Privata", city: "Garbagnate Monastero", note: "Private event" },
 ];
 
 const GENRES = ["House", "Tech House", "Italodisco", "New Wave", "Punk / Rock", "Ska"];
