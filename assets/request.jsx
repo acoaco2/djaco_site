@@ -262,6 +262,11 @@ function DayChart({ entries }) {
             <div style={{ fontSize: 12, color: "var(--mute)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               {r.artist}
             </div>
+            {r.requester && (
+              <div style={{ fontSize: 10, color: "var(--mute)", opacity: 0.6, fontFamily: "var(--font-mono)", marginTop: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                ↳ {r.requester}
+              </div>
+            )}
             <div style={{ marginTop: 5, height: 3, borderRadius: 2, background: "rgba(34,32,30,0.1)", overflow: "hidden" }}>
               <div style={{
                 height: "100%", borderRadius: 2,
