@@ -9,10 +9,9 @@ function RequestPage({ navigate, store }) {
   const inputRef = React.useRef(null);
 
   const playedKeys = React.useMemo(() => {
-    const todayStr = new Date().toDateString();
     return new Set(
       store.requests
-        .filter(r => r.status === "played" && new Date(r.ts).toDateString() === todayStr)
+        .filter(r => r.status === "played")
         .map(r => r.title.toLowerCase() + "§" + r.artist.toLowerCase())
     );
   }, [store.requests]);
@@ -32,9 +31,7 @@ function RequestPage({ navigate, store }) {
   }, [query, catalog, playedKeys]);
 
   const todayTop = React.useMemo(() => {
-    const todayStr = new Date().toDateString();
     return store.requests
-      .filter(r => new Date(r.ts).toDateString() === todayStr)
       .sort((a, b) => b.votes - a.votes)
       .slice(0, 5);
   }, [store.requests]);
@@ -50,11 +47,9 @@ function RequestPage({ navigate, store }) {
 
   const handleSubmit = () => {
     if (!selected) return;
-    const todayStr = new Date().toDateString();
     const existing = store.requests.find(r =>
       r.title.toLowerCase() === selected.title.toLowerCase() &&
       r.artist.toLowerCase() === selected.artist.toLowerCase() &&
-      new Date(r.ts).toDateString() === todayStr &&
       r.status !== "played"
     );
     if (existing) {

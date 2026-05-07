@@ -8,10 +8,8 @@ function MonitorPage({ store, navigate }) {
     return () => { clearInterval(refresh); clearInterval(tick); };
   }, []);
 
-  const todayStr = new Date(now).toDateString();
-  const todayAll = store.requests.filter(r => new Date(r.ts).toDateString() === todayStr);
-  const top    = todayAll.filter(r => r.status !== "played").sort((a, b) => b.votes - a.votes).slice(0, 5);
-  const played = todayAll.filter(r => r.status === "played").sort((a, b) => b.votes - a.votes);
+  const top    = store.requests.filter(r => r.status !== "played").sort((a, b) => b.votes - a.votes).slice(0, 5);
+  const played = store.requests.filter(r => r.status === "played").sort((a, b) => b.votes - a.votes);
 
   const [confirmReset, setConfirmReset] = React.useState(false);
   const medals = ["var(--orange)", "#aaaaaa", "#cd7f32"];
@@ -52,7 +50,7 @@ function MonitorPage({ store, navigate }) {
             onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.35)"}
           >← home</button>
           <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.2em", color: "var(--orange)", marginBottom: 6 }}>
-            ● CLASSIFICA DEL GIORNO
+            ● CLASSIFICA
           </div>
           <div style={{ fontFamily: "var(--font-display)", fontSize: 52, lineHeight: 0.9 }}>
             Top 5<span style={{ color: "var(--orange)" }}>.</span>
