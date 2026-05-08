@@ -1,9 +1,5 @@
 // Home / intro page for Dj Aco
 
-const GIGS = [
-  { date: "28 LUG", day: "LUN", venue: "Serata Privata", city: "Garbagnate Monastero", note: "Private event" },
-];
-
 const GENRES = ["House", "Tech House", "Italodisco", "New Wave", "Punk / Rock", "Ska"];
 
 function HomePage({ navigate, djName, bio }) {
@@ -154,91 +150,6 @@ function HomePage({ navigate, djName, bio }) {
         <div style={{ marginTop: 20, display: "flex", flexWrap: "wrap", gap: 6 }}>
           {GENRES.map(g => (
             <span key={g} className="chip outline" style={{ fontSize: 10 }}>{g}</span>
-          ))}
-        </div>
-      </section>
-
-      <div className="groove" style={{ margin: "0 20px" }}/>
-
-      {/* UPCOMING GIGS */}
-      <section style={{ padding: "28px 20px" }} data-screen-label="Home · Gigs">
-        <div className="between" style={{ marginBottom: 12 }}>
-          <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.2em", color: "var(--mute)" }}>
-            § A02 — LIVE DATES
-          </div>
-          <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--orange-deep)" }}>
-            ● {GIGS.length} UPCOMING
-          </div>
-        </div>
-        <h2 className="display" style={{ fontSize: 28, margin: "0 0 18px" }}>
-          Prossime date
-        </h2>
-
-        <div className="stack" style={{ "--s": "10px" }}>
-          {GIGS.map((g, i) => (
-            <div key={i} style={{
-              display: "flex",
-              gap: 14,
-              alignItems: "stretch",
-              background: "var(--paper)",
-              border: "1.5px solid var(--ink)",
-              borderRadius: 12,
-              padding: 14,
-              position: "relative",
-              overflow: "hidden",
-            }}>
-              {/* Date block */}
-              <div style={{
-                flexShrink: 0,
-                width: 64,
-                textAlign: "center",
-                borderRight: "1.5px dashed var(--ink)",
-                paddingRight: 14,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-              }}>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--mute)", letterSpacing: "0.1em" }}>
-                  {g.day}
-                </div>
-                <div className="display" style={{ fontSize: 18, lineHeight: 1.1, marginTop: 2 }}>
-                  {g.date}
-                </div>
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontFamily: "var(--font-display)", fontSize: 16, lineHeight: 1.2, marginBottom: 4 }}>
-                  {g.venue}
-                </div>
-                <div style={{ fontSize: 13, color: "var(--ink-soft)", marginBottom: 6 }}>
-                  {g.city}
-                </div>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--mute)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                  {g.note}
-                </div>
-              </div>
-              <div style={{
-                position: "absolute",
-                right: -20, top: -20,
-                width: 60, height: 60,
-                borderRadius: "50%",
-                background: i === 0 ? "var(--orange)" : "transparent",
-                border: i === 0 ? "none" : "1.5px dashed var(--ink)",
-                opacity: i === 0 ? 1 : 0.3,
-              }}/>
-              {i === 0 && (
-                <div style={{
-                  position: "absolute",
-                  right: 8, top: 8,
-                  fontFamily: "var(--font-mono)",
-                  fontSize: 9,
-                  fontWeight: 700,
-                  letterSpacing: "0.1em",
-                  color: "var(--ink)",
-                }}>
-                  NEXT
-                </div>
-              )}
-            </div>
           ))}
         </div>
       </section>
