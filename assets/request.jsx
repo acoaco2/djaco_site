@@ -196,11 +196,11 @@ function RequestPage({ navigate, store }) {
           ) : (
             <>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.15em", color: "var(--mute)", margin: "14px 0 8px" }}>
-                CLASSIFICA DEL GIORNO
+                TOP RICHIESTE
               </div>
               {todayTop.length === 0 ? (
                 <div style={{ padding: "20px 0", color: "var(--mute)", fontSize: 12, fontFamily: "var(--font-mono)", letterSpacing: "0.05em" }}>
-                  Nessuna richiesta ancora oggi.
+                  Nessuna richiesta ancora.
                 </div>
               ) : (
                 <DayChart entries={todayTop}/>
